@@ -64,7 +64,6 @@
 <script setup lang="ts">
 import { User, Lock } from '@element-plus/icons-vue'
 import type { FormRules, FormInstance } from 'element-plus'
-import { ElMessage } from 'element-plus'
 import { ref, watch } from 'vue';
 import { PostgoRegisterAPI, PostApiLoginAPI } from '@/api/login'
 import { useUserStore } from '@/stores';
