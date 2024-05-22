@@ -17,7 +17,7 @@ export type cateItem = ruleTpye & {
   /**
    * 文章分类id
    */
-  id: number;
+  id?: number;
 };
 
 export type ruleTpye = {
