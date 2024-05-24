@@ -60,3 +60,33 @@ export type articleItem = {
    */
   cate_name: string;
 };
+//编辑文章详情参数
+export type articleInfo = addarticleInfo & {
+  /**
+   * 文章id
+   */
+  id?: string;
+};
+//添加文章详情参数
+export type addarticleInfo = {
+  /**
+   * 文章标题
+   */
+  title: string;
+  /**
+   * 文章分类id
+   */
+  cate_id: string;
+  /**
+   * 文章内容
+   */
+  content: string;
+  /**
+   * 文章封面图片文件对象
+   */
+  cover_img: any;
+  /**
+   * 文章状态(只能是"已发布"或"草稿")
+   */
+  state: string;
+};
