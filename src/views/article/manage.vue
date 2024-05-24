@@ -18,7 +18,7 @@
                 <el-button>重置</el-button>
             </el-form-item>
         </el-form>
-        <el-table style="width: 100%" :data="data" >
+        <el-table style="width: 100%" :data="data" v-loading="loading">
             <el-table-column label="文章标题">
                 <template #default="{ row }">
                     <el-link type="primary" :underline="false">{{ row.title }}</el-link>
@@ -42,6 +42,10 @@
                 </template>
             </el-table-column>
         </el-table>
+        <el-pagination v-model:current-page="params.pagenum" v-model:page-size="params.pagesize"
+            :page-sizes="[2, 3, 4, 5, 10]" layout="jumper, total, sizes, prev, pager, next" background :total="total"
+            @size-change="onSizeChange" @current-change="onCurrentChange"
+            style="margin-top: 20px; justify-content: flex-end" />
     </page-container>
 </template>
 
@@ -51,6 +55,7 @@ import ChannelSelect from './components/ChannelSelect.vue'
 import type { articleItem, paramsType } from '@/types/article';
 import { GetMyArticleListAPI } from '@/api/article';
 import { formatTime } from '@/utils/format'
+const loading = ref(false)
 //获取文章列表数据时需提供的参数
 const params = ref<paramsType>({
     pagenum: 1,
@@ -58,11 +63,15 @@ const params = ref<paramsType>({
     cate_id: '',
     state: ''
 })
+const total = ref<number>()
 const data = ref<articleItem[]>()
 //获取文章列表数据
 const GetMyArticleListData = async () => {
+    loading.value = true
     const res = await GetMyArticleListAPI(params.value)
     data.value = res.data
+    total.value = res.total
+    loading.value = false
 }
 GetMyArticleListData()
 
@@ -74,9 +83,22 @@ const manageEdit = (row: any) => {
 const manageDelete = (row: any) => {
 
 }
+//当前是第几页
+const onCurrentChange = (val: number) => {
+    params.value.pagenum = val
+    GetMyArticleListData()
+}
+// 每页几条
+const onSizeChange = (val: number) => {
+    params.value.pagenum = 1
+    params.value.pagesize = val
+    GetMyArticleListData()
+
+}
 </script>
 
-<style  lang="scss">
-.el-table .el-table__cell{
-    padding: 15px 0 
-}</style>
+<style lang="scss">
+.el-table .el-table__cell {
+    padding: 15px 0
+}
+</style>
