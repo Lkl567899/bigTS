@@ -1,7 +1,7 @@
 <template>
     <page-container title="文章管理">
         <template #extra>
-            <el-button type="primary"> 发布文章 </el-button>
+            <el-button type="primary" @click="addManage"> 发布文章 </el-button>
         </template>
         <el-form inline>
             <el-form-item label="文章分类:" style="width: 200px;">
@@ -46,16 +46,19 @@
             :page-sizes="[2, 3, 4, 5, 10]" layout="jumper, total, sizes, prev, pager, next" background :total="total"
             @size-change="onSizeChange" @current-change="onCurrentChange"
             style="margin-top: 20px; justify-content: flex-end" />
+        <article-edit ref="articleEditRef" @success="success"></article-edit>
     </page-container>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import ChannelSelect from './components/ChannelSelect.vue'
+import ArticleEdit from './components/ArticleEdit.vue';
 import type { articleItem, paramsType } from '@/types/article';
-import { GetMyArticleListAPI } from '@/api/article';
+import { DeleteMyArticleInfoAPI, GetMyArticleListAPI } from '@/api/article';
 import { formatTime } from '@/utils/format'
 const loading = ref(false)
+
 //获取文章列表数据时需提供的参数
 const params = ref<paramsType>({
     pagenum: 1,
@@ -63,7 +66,7 @@ const params = ref<paramsType>({
     cate_id: '',
     state: ''
 })
-const total = ref<number>()
+const total = ref<any>()
 const data = ref<articleItem[]>()
 //获取文章列表数据
 const GetMyArticleListData = async () => {
@@ -74,14 +77,29 @@ const GetMyArticleListData = async () => {
     loading.value = false
 }
 GetMyArticleListData()
-
+const articleEditRef = ref()
+//发布文章
+const addManage = () => {
+    articleEditRef.value.open({})
+}
 //编辑
 const manageEdit = (row: any) => {
-    console.log(row);
+
+    articleEditRef.value.open(row)
 }
 //删除
-const manageDelete = (row: any) => {
-
+const manageDelete = async (row: any) => {
+    await DeleteMyArticleInfoAPI(row.id)
+    GetMyArticleListData()
+}
+//回显
+const success = (type: string) => {
+    if (type === 'add') {
+        // 如果是添加，需要跳转渲染最后一页，编辑直接渲染当前页
+        const lastPage = Math.ceil((total.value + 1) / params.value.pagesize)
+        params.value.pagenum = lastPage
+    }
+    GetMyArticleListData()
 }
 //当前是第几页
 const onCurrentChange = (val: number) => {
