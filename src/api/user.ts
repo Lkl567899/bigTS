@@ -17,3 +17,12 @@ type dataType = {
 export const PutMyUserinfoAPI = (data: dataType) => {
   return request.put("/my/userinfo", data);
 };
+//更新-用户密码
+type pwdfrom = {
+  old_pwd: string;
+  new_pwd: string;
+  re_pwd: string;
+}
+export const PatchMyUupdatepwdAPI = (data:pwdfrom) =>{
+  return request.patch('/my/updatepwd',data)
+}
